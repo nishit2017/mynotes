@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Learning Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: 70vh;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .sidebar h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .notes-list {
+            list-style: none;
+        }
+
+        .notes-list li {
+            margin-bottom: 12px;
+        }
+
+        .note-link {
+            display: block;
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-link:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .note-link.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .note-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .note-link:hover::before {
+            left: 100%;
+        }
+
+        .content-area {
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            color: #6c757d;
+            padding: 60px 20px;
+        }
+
+        .welcome-screen h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .note-detail {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .note-detail.active {
+            display: block;
+        }
+
+        .note-detail h2 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .note-description {
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .note-description h3 {
+            color: #2c3e50;
+            margin: 30px 0 15px 0;
+            font-size: 1.5rem;
+        }
+
+        .note-description h4 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .note-description ul, .note-description ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        .note-description li {
+            margin-bottom: 8px;
+        }
+
+        .note-description code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+
+        .note-description pre {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-btn {
+            display: none;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                margin: 10px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar.mobile-show {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 100;
+                background: white;
+            }
+
+            .back-btn {
+                display: block;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Learning Notes</h1>
+            <p class="subtitle">A collection of insights from books, courses, and experiences</p>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar" id="sidebar">
+                <button class="back-btn" id="backBtn">← Back to Notes</button>
+                <h2>Topics</h2>
+                <input type="text" class="search-box" id="searchBox" placeholder="Search notes...">
+                <ul class="notes-list" id="notesList">
+                    <!-- Notes will be populated by JavaScript -->
+                </ul>
+            </aside>
+
+            <main class="content-area">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <h2>Welcome to My Learning Journal</h2>
+                    <p>Select a topic from the sidebar to view my notes and insights.</p>
+                </div>
+                
+                <div id="noteContent">
+                    <!-- Note details will be populated here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Notes data - you can easily modify this to add your own notes
+        const notesData = [
+            {
+                id: 1,
+                title: "System Design Fundamentals",
+                category: "System Design",
+                description: `
+                    <h3>Scalability Concepts</h3>
+                    <h4>Horizontal vs Vertical Scaling</h4>
+                    <p>Horizontal scaling (scaling out) involves adding more servers to handle increased load, while vertical scaling (scaling up) means upgrading existing hardware.</p>
+                    
+                    <h4>Load Balancing</h4>
+                    <p>Distributes incoming requests across multiple servers. Key types:</p>
+                    <ul>
+                        <li><strong>Round Robin:</strong> Requests distributed sequentially</li>
+                        <li><strong>Least Connections:</strong> Routes to server with fewest active connections</li>
+                        <li><strong>IP Hash:</strong> Uses client IP to determine server</li>
+                    </ul>
+
+                    <h3>Database Design Patterns</h3>
+                    <h4>ACID Properties</h4>
+                    <ul>
+                        <li><strong>Atomicity:</strong> All or nothing transactions</li>
+                        <li><strong>Consistency:</strong> Database remains in valid state</li>
+                        <li><strong>Isolation:</strong> Concurrent transactions don't interfere</li>
+                        <li><strong>Durability:</strong> Committed changes are permanent</li>
+                    </ul>
+
+                    <h4>CAP Theorem</h4>
+                    <p>You can only guarantee 2 out of 3: Consistency, Availability, Partition tolerance</p>
+
+                    <h3>Caching Strategies</h3>
+                    <ul>
+                        <li><strong>Cache-aside:</strong> Application manages cache</li>
+                        <li><strong>Write-through:</strong> Write to cache and database simultaneously</li>
+                        <li><strong>Write-behind:</strong> Write to cache first, database later</li>
+                    </ul>
+                `
+            },
+            {
+                id: 2,
+                title: "Microservices Architecture",
+                category: "System Design",
+                description: `
+                    <h3>Core Principles</h3>
+                    <p>Microservices break down applications into small, independent services that communicate over networks.</p>
+
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Independent deployment and scaling</li>
+                        <li>Technology diversity</li>
+                        <li>Fault isolation</li>
+                        <li>Team autonomy</li>
+                    </ul>
+
+                    <h4>Challenges</h4>
+                    <ul>
+                        <li>Network complexity</li>
+                        <li>Data consistency</li>
+                        <li>Service discovery</li>
+                        <li>Monitoring and debugging</li>
+                    </ul>
+
+                    <h3>Communication Patterns</h3>
+                    <h4>Synchronous Communication</h4>
+                    <ul>
+                        <li>REST APIs</li>
+                        <li>GraphQL</li>
+                        <li>gRPC</li>
+                    </ul>
+
+                    <h4>Asynchronous Communication</h4>
+                    <ul>
+                        <li>Message queues (RabbitMQ, Apache Kafka)</li>
+                        <li>Event-driven architecture</li>
+                        <li>Pub/Sub patterns</li>
+                    </ul>
+
+                    <h3>Data Management</h3>
+                    <p>Each microservice should own its data. Patterns include:</p>
+                    <ul>
+                        <li><strong>Database per service:</strong> Each service has its own database</li>
+                        <li><strong>Saga pattern:</strong> Manages distributed transactions</li>
+                        <li><strong>CQRS:</strong> Separate read and write models</li>
+                    </ul>
+                `
+            },
+            {
+                id: 3,
+                title: "Clean Code - Robert Martin",
+                category: "Books",
+                description: `
+                    <h3>Key Principles</h3>
+                    
+                    <h4>Meaningful Names</h4>
+                    <ul>
+                        <li>Use intention-revealing names</li>
+                        <li>Avoid disinformation</li>
+                        <li>Make meaningful distinctions</li>
+                        <li>Use pronounceable and searchable names</li>
+                    </ul>
+
+                    <h4>Functions</h4>
+                    <ul>
+                        <li><strong>Small:</strong> Functions should be small, then smaller</li>
+                        <li><strong>Do one thing:</strong> Single Responsibility Principle</li>
+                        <li><strong>One level of abstraction:</strong> Don't mix levels</li>
+                        <li><strong>Descriptive names:</strong> Long descriptive name is better than short enigmatic</li>
+                    </ul>
+
+                    <h3>Comments</h3>
+                    <p>Good code mostly documents itself. Comments should explain <em>why</em>, not <em>what</em>.</p>
+                    
+                    <h4>Good Comments</h4>
+                    <ul>
+                        <li>Legal comments (copyright)</li>
+                        <li>Informative comments</li>
+                        <li>Explanation of intent</li>
+                        <li>Warning of consequences</li>
+                    </ul>
+
+                    <h4>Bad Comments</h4>
+                    <ul>
+                        <li>Mumbling</li>
+                        <li>Redundant comments</li>
+                        <li>Misleading comments</li>
+                        <li>Journal comments</li>
+                    </ul>
+
+                    <h3>Error Handling</h3>
+                    <ul>
+                        <li>Use exceptions rather than return codes</li>
+                        <li>Write your try-catch-finally statement first</li>
+                        <li>Don't return null</li>
+                        <li>Don't pass null</li>
+                    </ul>
+                `
+            },
+            {
+                id: 4,
+                title: "Database Indexing",
+                category: "System Design",
+                description: `
+                    <h3>Index Types</h3>
+                    
+                    <h4>B-Tree Indexes</h4>
+                    <p>Most common type of index. Good for:</p>
+                    <ul>
+                        <li>Equality comparisons</li>
+                        <li>Range queries</li>
+                        <li>Sorting</li>
+                    </ul>
+
+                    <h4>Hash Indexes</h4>
+                    <p>Fast for equality lookups but can't be used for range queries.</p>
+
+                    <h4>Bitmap Indexes</h4>
+                    <p>Efficient for columns with low cardinality (few distinct values).</p>
+
+                    <h3>Index Design Principles</h3>
+                    <ul>
+                        <li><strong>Selectivity:</strong> More selective columns should come first</li>
+                        <li><strong>Composite indexes:</strong> Order matters for multi-column indexes</li>
+                        <li><strong>Covering indexes:</strong> Include all columns needed by the query</li>
+                    </ul>
+
+                    <h3>Trade-offs</h3>
+                    <h4>Benefits</h4>
+                    <ul>
+                        <li>Faster SELECT queries</li>
+                        <li>Faster JOIN operations</li>
+                        <li>Faster ORDER BY operations</li>
+                    </ul>
+
+                    <h4>Costs</h4>
+                    <ul>
+                        <li>Additional storage space</li>
+                        <li>Slower INSERT/UPDATE/DELETE operations</li>
+                        <li>Index maintenance overhead</li>
+                    </ul>
+
+                    <h3>Best Practices</h3>
+                    <ul>
+                        <li>Index columns used in WHERE clauses</li>
+                        <li>Index foreign key columns</li>
+                        <li>Monitor index usage and remove unused indexes</li>
+                        <li>Consider partial indexes for large tables</li>
+                    </ul>
+                `
+            },
+            {
+                id: 5,
+                title: "Design Patterns - Gang of Four",
+                category: "Books",
+                description: `
+                    <h3>Creational Patterns</h3>
+                    
+                    <h4>Singleton</h4>
+                    <p>Ensures a class has only one instance and provides global access to it.</p>
+                    <ul>
+                        <li>Use for logging, database connections, caching</li>
+                        <li>Be careful with thread safety</li>
+                        <li>Consider dependency injection instead</li>
+                    </ul>
+
+                    <h4>Factory Method</h4>
+                    <p>Creates objects without specifying their exact classes.</p>
+                    <ul>
+                        <li>Useful when you don't know beforehand the exact types of objects</li>
+                        <li>Promotes loose coupling</li>
+                    </ul>
+
+                    <h4>Builder</h4>
+                    <p>Constructs complex objects step by step.</p>
+                    <ul>
+                        <li>Great for objects with many optional parameters</li>
+                        <li>More readable than telescoping constructors</li>
+                    </ul>
+
+                    <h3>Structural Patterns</h3>
+                    
+                    <h4>Adapter</h4>
+                    <p>Allows incompatible interfaces to work together.</p>
+                    
+                    <h4>Decorator</h4>
+                    <p>Adds behavior to objects dynamically without altering their structure.</p>
+                    
+                    <h4>Facade</h4>
+                    <p>Provides a simplified interface to a complex subsystem.</p>
+
+                    <h3>Behavioral Patterns</h3>
+                    
+                    <h4>Observer</h4>
+                    <p>Defines a one-to-many dependency between objects.</p>
+                    
+                    <h4>Strategy</h4>
+                    <p>Defines a family of algorithms and makes them interchangeable.</p>
+                    
+                    <h4>Command</h4>
+                    <p>Encapsulates a request as an object, allowing parameterization and queuing.</p>
+
+                    <h3>Key Takeaways</h3>
+                    <ul>
+                        <li>Patterns are solutions to recurring problems</li>
+                        <li>Don't force patterns where they're not needed</li>
+                        <li>Understand the problem before applying the pattern</li>
+                        <li>Composition over inheritance</li>
+                    </ul>
+                `
+            },
+            {
+                id: 6,
+                title: "Distributed Systems Concepts",
+                category: "System Design",
+                description: `
+                    <h3>Consensus Algorithms</h3>
+                    
+                    <h4>Raft Algorithm</h4>
+                    <p>Achieves consensus in distributed systems through leader election.</p>
+                    <ul>
+                        <li><strong>Leader:</strong> Handles all client requests</li>
+                        <li><strong>Followers:</strong> Passive, respond to leaders and candidates</li>
+                        <li><strong>Candidates:</strong> Used to elect a new leader</li>
+                    </ul>
+
+                    <h4>Byzantine Fault Tolerance</h4>
+                    <p>Handles arbitrary failures including malicious behavior.</p>
+
+                    <h3>Consistency Models</h3>
+                    
+                    <h4>Strong Consistency</h4>
+                    <p>All nodes see the same data at the same time.</p>
+                    
+                    <h4>Eventual Consistency</h4>
+                    <p>System will become consistent over time if no new updates are made.</p>
+                    
+                    <h4>Weak Consistency</h4>
+                    <p>No guarantees about when all nodes will see the same data.</p>
+
+                    <h3>Distributed System Challenges</h3>
+                    <ul>
+                        <li><strong>Network Partitions:</strong> Network failures split the system</li>
+                        <li><strong>Clock Synchronization:</strong> Different nodes have different times</li>
+                        <li><strong>Failure Detection:</strong> Distinguishing slow nodes from failed nodes</li>
+                        <li><strong>Leader Election:</strong> Choosing a coordinator in distributed systems</li>
+                    </ul>
+
+                    <h3>Patterns and Solutions</h3>
+                    
+                    <h4>Circuit Breaker</h4>
+                    <p>Prevents cascading failures by failing fast when a service is down.</p>
+                    
+                    <h4>Bulkhead</h4>
+                    <p>Isolates resources to prevent failures from spreading.</p>
+                    
+                    <h4>Saga Pattern</h4>
+                    <p>Manages distributed transactions as a sequence of local transactions.</p>
+                `
+            }
+        ];
+
+        // Application state
+        let currentNote = null;
+        let filteredNotes = [...notesData];
+
+        // DOM elements
+        const notesList = document.getElementById('notesList');
+        const noteContent = document.getElementById('noteContent');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const searchBox = document.getElementById('searchBox');
+        const sidebar = document.getElementById('sidebar');
+        const backBtn = document.getElementById('backBtn');
+
+        // Initialize the application
+        function init() {
+            renderNotesList();
+            setupEventListeners();
+        }
+
+        // Render the list of notes in the sidebar
+        function renderNotesList() {
+            notesList.innerHTML = '';
+            
+            filteredNotes.forEach(note => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = '#';
+                link.className = 'note-link';
+                link.dataset.noteId = note.id;
+                
+                if (currentNote && currentNote.id === note.id) {
+                    link.classList.add('active');
+                }
+                
+                link.innerHTML = `
+                    <div class="category-tag">${note.category}</div>
+                    <strong>${note.title}</strong>
+                `;
+                
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showNote(note.id);
+                });
+                
+                li.appendChild(link);
+                notesList.appendChild(li);
+            });
+        }
+
+        // Show a specific note
+        function showNote(noteId) {
+            const note = notesData.find(n => n.id === noteId);
+            if (!note) return;
+
+            currentNote = note;
+            
+            // Update active state in sidebar
+            document.querySelectorAll('.note-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.noteId == noteId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Hide welcome screen and show note content
+            welcomeScreen.style.display = 'none';
+            
+            noteContent.innerHTML = `
+                <div class="note-detail active">
+                    <h2>${note.title}</h2>
+                    <div class="note-description">
+                        ${note.description}
+                    </div>
+                </div>
+            `;
+
+            // On mobile, hide sidebar after selecting a note
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-show');
+            }
+        }
+
+        // Filter notes based on search
+        function filterNotes(searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filteredNotes = notesData.filter(note => 
+                note.title.toLowerCase().includes(term) ||
+                note.category.toLowerCase().includes(term) ||
+                note.description.toLowerCase().includes(term)
+            );
+            renderNotesList();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            searchBox.addEventListener('input', (e) => {
+                filterNotes(e.target.value);
+            });
+
+            // Mobile back button
+            backBtn.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-show');
+            });
+
+            // Mobile menu toggle (you can add a hamburger button if needed)
+            if (window.innerWidth <= 768) {
+                // Auto-show sidebar on mobile initially
+                // You might want to add a menu button in the header for better UX
+            }
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('mobile-show');
+                }
+            });
+        }
+
+        // Show mobile sidebar (call this function from a menu button if you add one)
+        function showMobileSidebar() {
+            sidebar.classList.add('mobile-show');
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
