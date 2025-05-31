@@ -1,0 +1,30 @@
+<h3>Scalability Concepts</h3>
+<h4>Horizontal vs Vertical Scaling</h4>
+<p>Horizontal scaling (scaling out) involves adding more servers to handle increased load, while vertical scaling (scaling up) means upgrading existing hardware.</p>
+
+<h4>Load Balancing</h4>
+<p>Distributes incoming requests across multiple servers. Key types:</p>
+<ul>
+    <li><strong>Round Robin:</strong> Requests distributed sequentially</li>
+    <li><strong>Least Connections:</strong> Routes to server with fewest active connections</li>
+    <li><strong>IP Hash:</strong> Uses client IP to determine server</li>
+</ul>
+
+<h3>Database Design Patterns</h3>
+<h4>ACID Properties</h4>
+<ul>
+    <li><strong>Atomicity:</strong> All or nothing transactions</li>
+    <li><strong>Consistency:</strong> Database remains in valid state</li>
+    <li><strong>Isolation:</strong> Concurrent transactions don't interfere</li>
+    <li><strong>Durability:</strong> Committed changes are permanent</li>
+</ul>
+
+<h4>CAP Theorem</h4>
+<p>You can only guarantee 2 out of 3: Consistency, Availability, Partition tolerance</p>
+
+<h3>Caching Strategies</h3>
+<ul>
+    <li><strong>Cache-aside:</strong> Application manages cache</li>
+    <li><strong>Write-through:</strong> Write to cache and database simultaneously</li>
+    <li><strong>Write-behind:</strong> Write to cache first, database later</li>
+</ul>
